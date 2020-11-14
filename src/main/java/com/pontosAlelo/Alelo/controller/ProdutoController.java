@@ -54,7 +54,7 @@ public class ProdutoController {
 	@PostMapping("/{id}")
 	public ResponseEntity<Produto> post (@RequestBody Produto produto, @PathVariable long id) throws NotFoundException{
 		Cliente cliente = clienteRepository.findById(id).orElseThrow(() -> new NotFoundException("cliente nao encontrado"));
-		if (produto.isTipo() == true); {
+		if (produto.isTipo()) {
 			cliente.addPontos();
 		}
 		
@@ -62,8 +62,11 @@ public class ProdutoController {
 	}
 	
 	@PutMapping("/{id}")
-	public ResponseEntity<Produto> put (@RequestBody Produto produto){
-		return ResponseEntity.status(HttpStatus.OK).body(repository.save(produto));
+	public ResponseEntity<Produto> put (@RequestBody Produto produto, @PathVariable long id) throws NotFoundException{
+		Produto produtoNaoAlterado = repository.findById(id).orElseThrow(() -> new NotFoundException("produto nao encontrado"));
+		produtoNaoAlterado.setNome(produto.getNome());
+		produtoNaoAlterado.setTipo(produto.isTipo());
+		return ResponseEntity.status(HttpStatus.OK).body(repository.save(produtoNaoAlterado));
 	}
 	
 	@DeleteMapping("/{id}")
